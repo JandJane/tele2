@@ -172,6 +172,8 @@ def ShowSlugs(req):
 
 def MySlugs(req):
     result = req.get("result").get('contexts')[0]
+    print(result)
+    print(req)
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
     headers = {'Content-type': 'application/json',
