@@ -1,3 +1,4 @@
+Roman Ilgovskiy, [02.12.17 18:05]
 # -*- coding: utf-8 -*-
 import requests
 
@@ -68,7 +69,7 @@ def processRequest(req):
         return speech
     elif req.get("result").get("action") == "Balance":
         speech = Balance(req)
-        return speech             
+        return speech
     elif req.get("result").get("action") == "UserData":
         speech = UserData(req)
         return speech
@@ -85,21 +86,23 @@ def processRequest(req):
 
 def AvailableTariffs(req):
     url = 'http://tele2-hackday-2017.herokuapp.com/api/tariffs/available'
-    
+
     response = requests.get(url, headers=headers)
 
     response = response.json()['data']
     speech = ''
     for i in range(len(response)):
-        speech += "Тариф - **" + response[i]["name"] + "**\n"
-    
-        speech += "Абонентская плата = **" + str(response[i]["subscriptionFee"] // 100)
-    
-        speech += "** __руб.__  **" + str(response[i]["subscriptionFee"] % 100)
-    
-        speech += "** __коп.__ \n"
-    
-        speech += "Подробную информацию смотрите здесь: " + response[i]["url"] + "\n"
+        speech += "Тариф - " + response[i]["name"] + "\n"
+
+        speech += "Абонентская плата = " + str(response[i]["subscriptionFee"] // 100)
+
+        speech += " руб.  " + str(response[i]["subscriptionFee"] % 100)
+
+        speech += " коп. \n"
+
+        speech += "Чтобы подключить тариф, введите: Подключить " + response[i]["slug"] + '\n'
+
+        speech += "Подробную информацию смотрите здесь: " + response[i]["url"] + "\n\n"
     return {
         "speech": speech,
         "displayText": speech,
@@ -107,29 +110,31 @@ def AvailableTariffs(req):
         # "contextOut": [],
         "source": "AvailableTariffs"
     }
-        
+
 
 def GetTariff(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     try:
-               number = parameters.get("phone-number")
+        number = parameters.get("phone-number")
 
-               headers = {'Content-type': 'application/json',
-                          'Accept': 'application/json',
-                          'Content-Encoding': 'utf-8',
-                          'X-API-Token': 'string'}
-               url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
-               response = requests.get(url, headers=headers)
-               response = response.json()['data']
+        headers = {'Content-type': 'application/json',
+                   'Accept': 'application/json',
+                   'Content-Encoding': 'utf-8',
+                   'X-API-Token': 'string'}
+        url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
+        response = requests.get(url, headers=headers)
+        response = response.json()['data']
+        Roman Ilgovskiy, [02.12.17 18:05]
 
-               speech = "Ваш тариф - **" + response["name"] + "**\n"
-               speech += "Абонентская плата = **" + str(response["subscriptionFee"] // 100)
-               speech += "** __руб.__  **" + str(response["subscriptionFee"] % 100)
-               speech += "** __коп.__ \n"
-               speech += "Подробную информацию смотрите здесь: " + response["url"]
+
+        speech = "Ваш тариф - " + response["name"] + "\n"
+        speech += "Абонентская плата = " + str(response["subscriptionFee"] // 100)
+        speech += " руб.  " + str(response["subscriptionFee"] % 100)
+        speech += " коп. \n"
+        speech += "Подробную информацию смотрите здесь: " + response["url"]
     except Exception:
-           speech = "Cначала введите номер телефона"
+        speech = "Номер телефона неверный"
     return {
         "speech": speech,
         "displayText": speech,
@@ -154,14 +159,17 @@ def ShowSlugs(req):
             if response[i]["connectionFee"] == 0:
                 speech += "Подключение бесплатно\n"
             else:
-                speech += "Стоимость подключения: " + str(response[i]["connectionFee"] // 100) + " руб. " + str(response[i]["connectionFee"] % 100) + " коп.\n"
+                speech += "Стоимость подключения: " + str(response[i]["connectionFee"] // 100) + " руб. " + str(
+                    response[i]["connectionFee"] % 100) + " коп.\n"
             if response[i]["subscriptionFee"] == 0:
                 speech += "Без абонентской платы\n"
             else:
-                speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(response[i]["subscriptionFee"] % 100) + " коп.\n"
-            speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n\n'
+                speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(
+                    response[i]["subscriptionFee"] % 100) + " коп.\n"
+            speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n'
+            speech += "Подробнее об услуге: " + response[i]["url"] + '\n\n'
     else:
-        speech = "ERROR"
+        speech = "Что-то пошло не так."
     return {
         "speech": speech,
         "displayText": speech,
@@ -199,9 +207,12 @@ def MySlugs(req):
             else:
                 speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(
                     response[i]["subscriptionFee"] % 100) + " коп.\n"
-            speech += "Чтобы отключить услугу, введите: Отключить " + response[i]["slug"] + '\n\n'
+            speech += "Чтобы отключить услугу, введите: Отключить " + response[i]["slug"] + '\n'
+            speech += "Подробнее об услуге: " + response[i]["url"] + '\n\n'
+
     else:
-        speech = "ERROR"
+        speech = "Номер телефона неверный."
+
     return {
         "speech": speech,
         "displayText": speech,
@@ -211,21 +222,23 @@ def MySlugs(req):
     }
 
 
+
 def Balance(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
     headers = {'Content-type': 'application/json',
-                  'Accept': 'application/json',
-                  'Content-Encoding': 'utf-8',
-                  'X-API-Token': 'string'}    
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
     url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/balance'
-    response = requests.get(url, headers = headers)
+    response = requests.get(url, headers=headers)
     response = response.json()['data']
-    speech = "Остаток интернета: " + str(response['internet']//1024) + "Гб" + str(response['internet']%1024) + "Мб\n"
+    speech = "Остаток интернета: " + str(response['internet'] // 1024) + "Гб" + str(
+        response['internet'] % 1024) + "Мб\n"
     speech += "Остаток СМС: " + str(response['sms']) + '\n'
-    speech += "Остаток минут: " + str(response['call']//60) + '\n'
-    speech += "Текущий баланс: " + str(response['money']//100) + ' Руб.' + str(response['money'] % 100) + ' Коп.\n'
+    speech += "Остаток минут: " + str(response['call'] // 60) + '\n'
+    speech += "Текущий баланс: " + str(response['money'] // 100) + ' Руб.' + str(response['money'] % 100) + ' Коп.\n'
     return {
         "speech": speech,
         "displayText": speech,
@@ -264,4 +277,4 @@ if __name__ == '__main__':
     print(1)
     print("Starting app on port %d" % port)
 
-    app.run(debug=False, port=port, host='0.0.0.0')
+app.run(debug=False, port=port, host='0.0.0.0')
