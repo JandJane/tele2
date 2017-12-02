@@ -247,8 +247,8 @@ def UserData(req):
     url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-
-    speech = "Телефон " + response["msisdn"] + "\n"
+    print(response)
+    #speech = "Телефон " + response["msisdn"] + "\n"
     speech += "ФИО " + response["lastName"] + ' ' + response["firstName"] + ' ' + response["middleName"] + '\n'
     speech += "email адрес " + response["email"]
     return {
