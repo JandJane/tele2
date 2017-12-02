@@ -128,7 +128,7 @@ def ShowSlugs(req):
     response = response.json()['data']
     if len(response) > 0:
         speech = "Список услуг:\n\n"
-        for i in response:
+        for i in range(len(response)):
             speech += response[i]["name"] + '\n'
             speech += response[i]["description"] + '\n'
             if response[i]["connectionFee"] == 0:
