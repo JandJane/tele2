@@ -34,6 +34,7 @@ def webhook():
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
+    
 
 
 def processRequest(req):
@@ -74,6 +75,18 @@ def processRequest(req):
     elif req.get("result").get("action") == "SlugDescription":
         speech = SlugDescription(req)
         return speech
+    elif req.get("results").get("action") == "SwitchTariff":
+        speech = SwitchTariff(req)
+        return speech
+
+    print("Response: " + speech)
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "AskPhoneNumber"
+    }
 
 
 def AvailableTariffs(req):
@@ -368,6 +381,49 @@ def SlugDescription(req):
         # "data": data,
         # "contextOut": [],
         "source": "SlugDescription"
+    }
+
+
+def SwitchTariff(req):
+
+    result = req.get("result").get('contexts')[0]
+
+    parameters = result.get("parameters")
+
+    number = parameters.get("phone-number")
+
+    tariff = parameters.get("Tariff-name")
+
+    headers = {'Content-type': 'application/json',
+
+               'Accept': 'application/json',
+
+               'Content-Encoding': 'utf-8',
+
+               'X-API-Token': 'string'}
+
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff/' + tariff
+
+    response = requests.put(url, headers=headers)
+
+    response = response.json()['data']
+
+    print(response)
+
+    speech = "ok"
+
+    return {
+
+        "speech": speech,
+
+        "displayText": speech,
+
+        # "data": data,
+
+        # "contextOut": [],
+
+        "source": "SwitchTariff"
+
     }
 
 
