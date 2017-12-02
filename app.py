@@ -63,6 +63,10 @@ def processRequest(req):
     elif req.get("result").get("action") == "AvailableTariffs":
         speech = AvailableTariffs(req)
         return speech
+    elif req.get("result").get("action") == "MySlugs":
+        speech = MySlugs(req)
+        return speech
+    
     print("Response: " + speech)
 
     return {
@@ -161,6 +165,43 @@ def ShowSlugs(req):
         "source": "ShowSlugs"
     }
 
+
+def MySlugs(req):
+    result = req.get("result").get('contexts')[0]
+    parameters = result.get("parameters")
+    number = parameters.get("phone-number")
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
+    url = "http://tele2-hackday-2017.herokuapp.com/api/subscribers/" + number + "/services"
+    response = requests.get(url, headers=headers)
+    response = response.json()['data']
+    if len(response) > 0:
+        speech = "Список услуг:\n\n"
+        for i in range(len(response)):
+            speech += response[i]["name"] + '\n'
+            speech += response[i]["description"] + '\n'
+            if response[i]["connectionFee"] == 0:
+                speech += "Подключение бесплатно\n"
+            else:
+                speech += "Стоимость подключения: " + str(response[i]["connectionFee"] // 100) + " руб. " + str(
+                    response[i]["connectionFee"] % 100) + " коп.\n"
+            if response[i]["subscriptionFee"] == 0:
+                speech += "Без абонентской платы\n"
+            else:
+                speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(
+                    response[i]["subscriptionFee"] % 100) + " коп.\n"
+            speech += "Чтобы отключить услугу, введите: Отключить " + response[i]["slug"] + '\n\n'
+    else:
+        speech = "ERROR"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "MySlugs"
+    }
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
