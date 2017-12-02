@@ -291,8 +291,8 @@ def SwitchSlug(req):
     try:
         url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
         response = requests.put(url, headers=headers)
-        response = response.json()['data']
-        if response.get('status').get('code') == 200:
+        response = response.json()['meta']
+        if response.get('status') == 'OK':
             speech = "Услуга успешно подключена!"
         else:
             speech = "Ошибка при подключении услуги"
@@ -320,8 +320,8 @@ def SwitchOffSlug(req):
         url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
         response = requests.delete(url, headers=headers)
         print(response.json())
-        response = response.json()['data']
-        if response.get('status').get('code') == 200:
+        response = response.json()['meta']
+        if response.get('status') == 'OK':
             speech = "Услуга успешно отключена"
         else:
             speech = "Ошибка при отключении услуги"
@@ -406,11 +406,12 @@ def SwitchTariff(req):
 
     response = requests.put(url, headers=headers)
 
-    response = response.json()['data']
+    response = response.json()['meta']
 
-    print(response)
-
-    speech = "ok"
+    if response.get('status') == 'OK':
+        speech = "Тариф успешно изменён"
+    else:
+        speech = "Ошибка при изменение тарифа"
 
     return {
 
