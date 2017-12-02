@@ -1,4 +1,3 @@
-Roman Ilgovskiy, [02.12.17 18:05]
 # -*- coding: utf-8 -*-
 import requests
 
