@@ -57,6 +57,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "GetTariff":
         speech = GetTariff(req)
         return speech
+    elif req.get("result").get("action") == "ShowSlugs":
+        speech = ShowSlugs(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -112,6 +115,39 @@ def GetTariff(req):
         # "data": data,
         # "contextOut": [],
         "source": "GetTariff"
+    }
+
+
+
+def ShowSlugs(req):
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8'}
+    url = "http://tele2-hackday-2017.herokuapp.com/api/services/available"
+    response = requests.get(url, headers=headers)
+    response = response.json()['data']
+    if response.length() > 0:
+        speech = "Список услуг:\n\n"
+        for i in response:
+            speech += response[i]["name"] + '\n'
+            speech += response[i]["description"] + '\n'
+            if response[i]["connectionFee"] == 0:
+                speech += "Подключение бесплатно"
+            else:
+                speech += "Стоимость подключения: " + response[i]["connectionFee"] // 100 + " руб. " + response[i]["connectionFee"] % 100 + " коп.\n"
+            if response[i]["subscriptionFee"] == 0:
+                speech += "Без абонентской платы\n"
+            else:
+                speech += "Абонентская плата: " + response[i]["subscriptionFee"] // 100 + " руб. " + response[i]["subscriptionFee"] % 100 + " коп.\n"
+            speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n'
+    else:
+        speech = "ERROR"
+     return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "ShowSlugs"
     }
 
 
