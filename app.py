@@ -72,6 +72,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "UserData":
         speech = UserData(req)
         return speech
+    elif req.get("result").get("action") == "SwitchSlug":
+        speech = SwitchSlug(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -265,6 +268,29 @@ def UserData(req):
         # "data": data,
         # "contextOut": [],
         "source": "UserData"
+    }
+
+
+def SwitchData(req):
+    result = req.get("result").get('contexts')[0]
+    parameters = result.get("parameters")
+    number = parameters.get("phone-number")
+    slug = parameters.get("slug-name")
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
+    response = requests.put(url, headers=headers)
+    response = response.json()['data']
+    print(response)
+    speech = "ok"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "SwitchData"
     }
 
 
