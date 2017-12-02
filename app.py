@@ -85,7 +85,7 @@ def processRequest(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "AskPhoneNumber"
     }
 
@@ -113,7 +113,7 @@ def AvailableTariffs(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "AvailableTariffs"
     }
 
@@ -144,7 +144,7 @@ def GetTariff(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "GetTariff"
     }
 
@@ -176,7 +176,7 @@ def ShowSlugs(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "ShowSlugs"
     }
 
@@ -219,7 +219,7 @@ def MySlugs(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "MySlugs"
     }
 
@@ -249,7 +249,7 @@ def Balance(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "Balance"
     }
 
@@ -277,7 +277,7 @@ def UserData(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "UserData"
     }
 
@@ -308,7 +308,7 @@ def SwitchSlug(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "SwitchSlug"
     }
 
@@ -340,7 +340,7 @@ def SwitchOffSlug(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "SwitchOffSlug"
     }
 
@@ -380,7 +380,7 @@ def SlugDescription(req):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
         "source": "SlugDescription"
     }
 
@@ -424,7 +424,7 @@ def SwitchTariff(req):
 
         # "data": data,
 
-        # "contextOut": [],
+        "contextOut": req.get("result").get('contexts'),
 
         "source": "SwitchTariff"
 
