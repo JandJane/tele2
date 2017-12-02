@@ -124,7 +124,7 @@ def GetTariff(req):
     try:
         number = parameters.get("phone-number")
         print(result)
-        print(phone)
+        print(number)
         headers = {'Content-type': 'application/json',
                    'Accept': 'application/json',
                    'Content-Encoding': 'utf-8',
