@@ -69,7 +69,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "Balance":
         speech = Balance(req)
         return speech             
-    
+    elif req.get("result").get("action") == "UserData":
+        speech = Balance(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -128,7 +130,6 @@ def GetTariff(req):
                speech += "Подробную информацию смотрите здесь: " + response["url"]
     except Exception:
            speech = "Cначала введите номер телефона"
-           speech += Exception
     return {
         "speech": speech,
         "displayText": speech,
@@ -232,6 +233,32 @@ def Balance(req):
         # "contextOut": [],
         "source": "Balance"
     }
+
+
+def UserData(req):
+    result = req.get("result").get('contexts')[0]
+    parameters = result.get("parameters")
+    number = parameters.get("phone-number")
+
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
+    response = requests.get(url, headers=headers)
+    response = response.json()['data']
+
+    speech = "Телефон " + response["msisdn"] + "\n"
+    speech += "ФИО " + response["lastName"] + ' ' + response["firstName"] + ' ' + response["middleName"] + '\n'
+    speech += "email адрес " + response["email"]
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "UserData"
+    }
+
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
