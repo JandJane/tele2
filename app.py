@@ -209,7 +209,7 @@ def MySlugs(req):
 
 def Balance(req):
     result = req.get("result").get('contexts')[0]
-    parametrs = result.get("parameters")
+    parameters = result.get("parameters")
     number = parameters.get("phone-number")
     headers = {'Content-type': 'application/json',
                   'Accept': 'application/json',
