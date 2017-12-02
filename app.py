@@ -145,7 +145,7 @@ def ShowSlugs(req):
     url = "http://tele2-hackday-2017.herokuapp.com/api/services/available"
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-    if len(response) > 0:
+    if response:
         speech = "Список услуг:\n\n"
         for i in range(len(response)):
             speech += response[i]["name"] + '\n'
@@ -183,7 +183,7 @@ def MySlugs(req):
     url = "http://tele2-hackday-2017.herokuapp.com/api/subscribers/" + number + "/services"
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-    if len(response) > 0:
+    if response:
         speech = "Список услуг:\n\n"
         for i in range(len(response)):
             speech += response[i]["name"] + '\n'
