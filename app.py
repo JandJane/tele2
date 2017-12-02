@@ -143,7 +143,7 @@ def ShowSlugs(req):
             if response[i]["connectionFee"] == 0:
                 speech += "Подключение бесплатно"
             else:
-                speech += "Стоимость подключения: " + srt(response[i]["connectionFee"] // 100) + " руб. " + str(response[i]["connectionFee"] % 100) + " коп.\n"
+                speech += "Стоимость подключения: " + str(response[i]["connectionFee"] // 100) + " руб. " + str(response[i]["connectionFee"] % 100) + " коп.\n"
             if response[i]["subscriptionFee"] == 0:
                 speech += "Без абонентской платы\n"
             else:
