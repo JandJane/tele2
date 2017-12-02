@@ -222,7 +222,7 @@ def Balance(req):
     speech = "Остаток интернета: " + str(response['internet']//1024) + "Гб" + str(response['internet']%1024) + "Мб\n"
     speech += "Остаток СМС: " + str(response['sms']) + '\n'
     speech += "Остаток минут: " + str(response['call']//60) + '\n'
-    speech += "Текущий баланс: " + str(response['money']//100) + 'Руб.' + str(response['money'] % 100) + 'Коп.\n'
+    speech += "Текущий баланс: " + str(response['money']//100) + ' Руб.' + str(response['money'] % 100) + ' Коп.\n'
     return {
         "speech": speech,
         "displayText": speech,
