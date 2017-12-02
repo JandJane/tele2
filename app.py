@@ -221,7 +221,6 @@ def MySlugs(req):
     }
 
 
-
 def Balance(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
@@ -233,11 +232,14 @@ def Balance(req):
     url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/balance'
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-    speech = "Остаток интернета: " + str(response['internet'] // 1024) + "Гб" + str(
-        response['internet'] % 1024) + "Мб\n"
-    speech += "Остаток СМС: " + str(response['sms']) + '\n'
-    speech += "Остаток минут: " + str(response['call'] // 60) + '\n'
-    speech += "Текущий баланс: " + str(response['money'] // 100) + ' Руб.' + str(response['money'] % 100) + ' Коп.\n'
+    if response:
+        speech = "Остаток интернета: " + str(response['internet'] // 1024) + "Гб" + str(
+            response['internet'] % 1024) + "Мб\n"
+        speech += "Остаток СМС: " + str(response['sms']) + '\n'
+        speech += "Остаток минут: " + str(response['call'] // 60) + '\n'
+        speech += "Текущий баланс: " + str(response['money'] // 100) + ' Руб.' + str(response['money'] % 100) + ' Коп.\n'
+    else:
+        speech = "Номер телефона неверный"
     return {
         "speech": speech,
         "displayText": speech,
@@ -259,9 +261,12 @@ def UserData(req):
     url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-    speech = "Телефон " + response["msisdn"] + "\n"
-    speech += "ФИО " + response["lastName"] + ' ' + response["firstName"] + ' ' + response["middleName"] + '\n'
-    speech += "email адрес " + response["email"]
+    if response:
+        speech = "Телефон " + response["msisdn"] + "\n"
+        speech += "ФИО " + response["lastName"] + ' ' + response["firstName"] + ' ' + response["middleName"] + '\n'
+        speech += "email адрес " + response["email"]
+    else:
+        speech = "Номер телефона неверный\n"
     return {
         "speech": speech,
         "displayText": speech,
@@ -271,7 +276,7 @@ def UserData(req):
     }
 
 
-def SwitchData(req):
+def SwitchSlug(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
