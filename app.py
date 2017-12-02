@@ -128,6 +128,7 @@ def GetTariff(req):
                speech += "Подробную информацию смотрите здесь: " + response["url"]
     except Exception:
            speech = "Cначала введите номер телефона"
+           speech += Exception
     return {
         "speech": speech,
         "displayText": speech,
