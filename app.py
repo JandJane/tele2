@@ -124,9 +124,6 @@ def GetTariff(req):
         url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
         response = requests.get(url, headers=headers)
         response = response.json()['data']
-        Roman Ilgovskiy, [02.12.17 18:05]
-
-
         speech = "Ваш тариф - " + response["name"] + "\n"
         speech += "Абонентская плата = " + str(response["subscriptionFee"] // 100)
         speech += " руб.  " + str(response["subscriptionFee"] % 100)
