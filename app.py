@@ -80,8 +80,9 @@ def AvailableTariffs(req):
     response = requests.get(url, headers=headers)
 
     response = response.json()['data']
+    speech = ''
     for i in range(len(response)):
-        speech = "Тариф - **" + response[i]["name"] + "**\n"
+        speech += "Тариф - **" + response[i]["name"] + "**\n"
     
         speech += "Абонентская плата = **" + str(response[i]["subscriptionFee"] // 100)
     
@@ -141,14 +142,14 @@ def ShowSlugs(req):
             speech += response[i]["name"] + '\n'
             speech += response[i]["description"] + '\n'
             if response[i]["connectionFee"] == 0:
-                speech += "Подключение бесплатно"
+                speech += "Подключение бесплатно\n"
             else:
                 speech += "Стоимость подключения: " + str(response[i]["connectionFee"] // 100) + " руб. " + str(response[i]["connectionFee"] % 100) + " коп.\n"
             if response[i]["subscriptionFee"] == 0:
                 speech += "Без абонентской платы\n"
             else:
                 speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(response[i]["subscriptionFee"] % 100) + " коп.\n"
-            speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n'
+            speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n\n'
     else:
         speech = "ERROR"
     return {
