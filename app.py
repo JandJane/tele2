@@ -75,6 +75,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "SwitchSlug":
         speech = SwitchSlug(req)
         return speech
+    elif req.get("result").get("action") == "SwitchOffSlug":
+        speech = SwitchOffSlug(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -285,17 +288,50 @@ def SwitchSlug(req):
                'Accept': 'application/json',
                'Content-Encoding': 'utf-8',
                'X-API-Token': 'string'}
-    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
-    response = requests.put(url, headers=headers)
-    response = response.json()['data']
-    print(response)
-    speech = "ok"
+    try:
+        url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
+        response = requests.put(url, headers=headers)
+        response = response.json()['data']
+        if response.get('status').get('code') == 200:
+            speech = "Услуга успешно подключена!"
+        else:
+            speech = "Ошибка при подключении услуги"
+    except Exception:
+        speech = "Ошибка при подключении услуги"
     return {
         "speech": speech,
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "SwitchData"
+        "source": "SwitchSlug"
+    }
+
+
+def SwitchOffSlug(req):
+    result = req.get("result").get('contexts')[0]
+    parameters = result.get("parameters")
+    number = parameters.get("phone-number")
+    slug = parameters.get("slug-name")
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
+    try:
+        url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
+        response = requests.delete(url, headers=headers)
+        response = response.json()['data']
+        if response.get('status').get('code') == 200:
+            speech = "Услуга успешно отключена"
+        else:
+            speech = "Ошибка при отключении услуги"
+    except Exception:
+        speech = "Ошибка при отключении услуги"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "SwitchOffSlug"
     }
 
 
