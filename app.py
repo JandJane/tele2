@@ -228,7 +228,7 @@ def Balance(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(result)
+    print(req.get("result"))
     print(number)    
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
