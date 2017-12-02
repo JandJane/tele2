@@ -70,7 +70,7 @@ def processRequest(req):
         speech = Balance(req)
         return speech             
     elif req.get("result").get("action") == "UserData":
-        speech = Balance(req)
+        speech = UserData(req)
         return speech
     print("Response: " + speech)
 
