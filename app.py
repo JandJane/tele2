@@ -78,6 +78,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "SwitchOffSlug":
         speech = SwitchOffSlug(req)
         return speech
+    elif req.get("result").get("action") == "SlugDescription":
+        speech = SlugDescription(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -332,6 +335,54 @@ def SwitchOffSlug(req):
         # "data": data,
         # "contextOut": [],
         "source": "SwitchOffSlug"
+    }
+
+
+def SlugDescription(req):
+    result = req.get("result").get('contexts')[0]
+    parameters = result.get("parameters")
+    slug = parameters.get("slug-name")
+
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8',
+               'X-API-Token': 'string'}
+    k = 0
+    headers1 = {'Content-type': 'application/json',
+               'Accept': 'application/json',
+               'Content-Encoding': 'utf-8'}
+    url1 = "http://tele2-hackday-2017.herokuapp.com/api/services/available"
+    response = requests.get(url1, headers=headers1)
+    response = response.json()['data']
+    for i in response:
+        if i["slug"] == slug:
+            k = 1
+    if k == 1:
+        url = "http://tele2-hackday-2017.herokuapp.com/api/services/" + slug
+        response = requests.get(url, headers=headers)
+        response = response.json()['data']
+        speech = response["name"] + '\n'
+        speech += response["description"] + '\n'
+        if response["connectionFee"] == 0:
+            speech += "Подключение бесплатно\n"
+        else:
+            speech += "Стоимость подключения: " + str(response["connectionFee"] // 100) + " руб. " + str(
+                response["connectionFee"] % 100) + " коп.\n"
+        if response["subscriptionFee"] == 0:
+            speech += "Без абонентской платы\n"
+        else:
+            speech += "Абонентская плата: " + str(response["subscriptionFee"] // 100) + " руб. " + str(
+                response["subscriptionFee"] % 100) + " коп.\n"
+        speech += "Чтобы подключить услугу, введите: Подключить " + response["slug"] + '\n'
+        speech += "Подробнее об услуге: " + response["url"] + '\n\n'
+    else:
+        speech = "Такой услуги не существует\n"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "SlugDescription"
     }
 
 
