@@ -91,7 +91,7 @@ def GetTariff(req):
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "DefaultWelcomeIntent.DefaultWelcomeIntent-custom"
+        "source": "GetTariff"
     }
 
 
