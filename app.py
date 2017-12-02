@@ -103,22 +103,24 @@ def AvailableTariffs(req):
 def GetTariff(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
-    number = parameters.get("phone-number")
+    try:
+               number = parameters.get("phone-number")
 
-    headers = {'Content-type': 'application/json',
-               'Accept': 'application/json',
-               'Content-Encoding': 'utf-8',
-               'X-API-Token': 'string'}
-    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
-    response = requests.get(url, headers=headers)
-    response = response.json()['data']
+               headers = {'Content-type': 'application/json',
+                          'Accept': 'application/json',
+                          'Content-Encoding': 'utf-8',
+                          'X-API-Token': 'string'}
+               url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
+               response = requests.get(url, headers=headers)
+               response = response.json()['data']
 
-    speech = "Ваш тариф - **" + response["name"] + "**\n"
-    speech += "Абонентская плата = **" + str(response["subscriptionFee"] // 100)
-    speech += "** __руб.__  **" + str(response["subscriptionFee"] % 100)
-    speech += "** __коп.__ \n"
-    speech += "Подробную информацию смотрите здесь: " + response["url"]
-
+               speech = "Ваш тариф - **" + response["name"] + "**\n"
+               speech += "Абонентская плата = **" + str(response["subscriptionFee"] // 100)
+               speech += "** __руб.__  **" + str(response["subscriptionFee"] % 100)
+               speech += "** __коп.__ \n"
+               speech += "Подробную информацию смотрите здесь: " + response["url"]
+    except Exception:
+           speech += "Cначала введите номер телефона"
     return {
         "speech": speech,
         "displayText": speech,
@@ -126,7 +128,6 @@ def GetTariff(req):
         # "contextOut": [],
         "source": "GetTariff"
     }
-
 
 
 def ShowSlugs(req):
