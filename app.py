@@ -60,6 +60,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "ShowSlugs":
         speech = ShowSlugs(req)
         return speech
+    elif req.get("result").get("action") == "AvailableTariffs":
+        speech = AvailableTariffs(req)
+        return speech
     print("Response: " + speech)
 
     return {
@@ -87,7 +90,13 @@ def AvailableTariffs(req):
         speech += "** __коп.__ \n"
     
         speech += "Подробную информацию смотрите здесь: " + response[i]["url"] + "\n"
-    return speech
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "AvailableTariffs"
+    }
         
 
 def GetTariff(req):
@@ -134,11 +143,11 @@ def ShowSlugs(req):
             if response[i]["connectionFee"] == 0:
                 speech += "Подключение бесплатно"
             else:
-                speech += "Стоимость подключения: " + response[i]["connectionFee"] // 100 + " руб. " + response[i]["connectionFee"] % 100 + " коп.\n"
+                speech += "Стоимость подключения: " + srt(response[i]["connectionFee"] // 100) + " руб. " + str(response[i]["connectionFee"] % 100) + " коп.\n"
             if response[i]["subscriptionFee"] == 0:
                 speech += "Без абонентской платы\n"
             else:
-                speech += "Абонентская плата: " + response[i]["subscriptionFee"] // 100 + " руб. " + response[i]["subscriptionFee"] % 100 + " коп.\n"
+                speech += "Абонентская плата: " + str(response[i]["subscriptionFee"] // 100) + " руб. " + str(response[i]["subscriptionFee"] % 100) + " коп.\n"
             speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n'
     else:
         speech = "ERROR"
