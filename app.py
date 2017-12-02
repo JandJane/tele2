@@ -66,6 +66,9 @@ def processRequest(req):
     elif req.get("result").get("action") == "MySlugs":
         speech = MySlugs(req)
         return speech
+    elif req.get("result").get("action") == "Balance":
+        speech = Balance(req)
+        return speech             
     
     print("Response: " + speech)
 
@@ -201,6 +204,30 @@ def MySlugs(req):
         # "data": data,
         # "contextOut": [],
         "source": "MySlugs"
+    }
+
+
+def Balance(req):
+    result = req.get("result").get('contexts')[0]
+    parametrs = result.get("parameters")
+    number = parameters.get("phone-number")
+    headers = {'Content-type': 'application/json',
+                  'Accept': 'application/json',
+                  'Content-Encoding': 'utf-8',
+                  'X-API-Token': 'string'}    
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/balance'
+    response = requests.get(url, headers = headers)
+    response = response.json()['data']
+    speech = "Остаток интернета: " + str(response['internet']//1024) + "Гб" + str(response['internet']%1024) + "Мб\n"
+    speech += "Остаток СМС: " + str(response['sms']) + '\n'
+    speech += "Остаток минут: " + str(response['call']//60) + '\n'
+    speech += "Текущий баланс: " + str(response['money']//100) + 'Руб.' + str(response['money'] % 100) + 'Коп.\n'
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "Balance"
     }
 
 if __name__ == '__main__':
