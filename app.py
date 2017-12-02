@@ -244,11 +244,10 @@ def UserData(req):
                'Accept': 'application/json',
                'Content-Encoding': 'utf-8',
                'X-API-Token': 'string'}
-    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff'
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number
     response = requests.get(url, headers=headers)
     response = response.json()['data']
-    print(response)
-    #speech = "Телефон " + response["msisdn"] + "\n"
+    speech = "Телефон " + response["msisdn"] + "\n"
     speech += "ФИО " + response["lastName"] + ' ' + response["firstName"] + ' ' + response["middleName"] + '\n'
     speech += "email адрес " + response["email"]
     return {
