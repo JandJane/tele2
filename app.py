@@ -27,16 +27,10 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def webhook():
-    print('webhook')
     req = request.get_json(silent=True, force=True)
-
-    print("Request:")
-    print(json.dumps(req, indent=4))
-
     res = processRequest(req)
 
     res = json.dumps(res, indent=4)
-    print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
@@ -47,7 +41,6 @@ def processRequest(req):
         result = req.get("result")
         parameters = result.get("parameters")
         phone = parameters.get("phone-number")
-        print(req['originalRequest']['data']['message']['text'])
         if utils.phone_standard(phone):
             speech = "Спасибо, ваш номер " + utils.phone_standard(phone) + " успешно сохранён."
             # post this phone number
@@ -81,15 +74,6 @@ def processRequest(req):
     elif req.get("result").get("action") == "SlugDescription":
         speech = SlugDescription(req)
         return speech
-    print("Response: " + speech)
-
-    return {
-        "speech": speech,
-        "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
-        "source": "AskPhoneNumber"
-    }
 
 
 def AvailableTariffs(req):
@@ -186,8 +170,8 @@ def ShowSlugs(req):
 
 def MySlugs(req):
     result = req.get("result").get('contexts')[0]
-    print(result)
-    print(req)
+    #print(result)
+    #print(req)
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
     headers = {'Content-type': 'application/json',
@@ -322,6 +306,7 @@ def SwitchOffSlug(req):
     try:
         url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
         response = requests.delete(url, headers=headers)
+        print(response.json())
         response = response.json()['data']
         if response.get('status').get('code') == 200:
             speech = "Услуга успешно отключена"
@@ -388,7 +373,6 @@ def SlugDescription(req):
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
-    print(1)
     print("Starting app on port %d" % port)
 
 app.run(debug=False, port=port, host='0.0.0.0')
