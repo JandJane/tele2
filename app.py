@@ -142,7 +142,7 @@ def ShowSlugs(req):
             speech += "Чтобы подключить услугу, введите: Подключить " + response[i]["slug"] + '\n'
     else:
         speech = "ERROR"
-     return {
+    return {
         "speech": speech,
         "displayText": speech,
         # "data": data,
