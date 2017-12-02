@@ -120,7 +120,7 @@ def GetTariff(req):
                speech += "** __коп.__ \n"
                speech += "Подробную информацию смотрите здесь: " + response["url"]
     except Exception:
-           speech += "Cначала введите номер телефона"
+           speech = "Cначала введите номер телефона"
     return {
         "speech": speech,
         "displayText": speech,
