@@ -67,6 +67,26 @@ def processRequest(req):
         "source": "AskPhoneNumber"
     }
 
+
+def AvailableTariffs(req):
+    url = 'http://tele2-hackday-2017.herokuapp.com/api/tariffs/available'
+    
+    response = requests.get(url, headers=headers)
+
+    response = response.json()['data']
+    for i in range(len(response)):
+        speech = "Тариф - **" + response[i]["name"] + "**\n"
+    
+        speech += "Абонентская плата = **" + str(response[i]["subscriptionFee"] // 100)
+    
+        speech += "** __руб.__  **" + str(response[i]["subscriptionFee"] % 100)
+    
+        speech += "** __коп.__ \n"
+    
+        speech += "Подробную информацию смотрите здесь: " + response[i]["url"] + "\n"
+    return speech
+        
+
 def GetTariff(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
