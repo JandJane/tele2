@@ -38,76 +38,66 @@ def webhook():
 
 def processRequest(req):
     if req.get("result").get("action") == "AskPhoneNumber":
-        result = req.get("result")
-        parameters = result.get("parameters")
-        phone = parameters.get("phone-number")
-        print(result)
-        print(phone)
-        if utils.phone_standard(phone):
-            speech = "Спасибо, ваш номер " + utils.phone_standard(phone) + " успешно сохранён."
-            # post this phone number
-        else:
-            speech = "Неверный формат ввода. \nПожалуйста, введите номер в формате 79XXXXXXXXX"
-            # delete phone entity
+        speech = HandlePhoneNumber(req)
     elif req.get("result").get("action") == "GetTariff":
         speech = GetTariff(req)
-        return speech
     elif req.get("result").get("action") == "ShowSlugs":
         speech = ShowSlugs(req)
-        return speech
     elif req.get("result").get("action") == "AvailableTariffs":
         speech = AvailableTariffs(req)
-        return speech
     elif req.get("result").get("action") == "MySlugs":
         speech = MySlugs(req)
-        return speech
     elif req.get("result").get("action") == "Balance":
         speech = Balance(req)
-        return speech
     elif req.get("result").get("action") == "UserData":
         speech = UserData(req)
-        return speech
     elif req.get("result").get("action") == "SwitchSlug":
         speech = SwitchSlug(req)
-        return speech
     elif req.get("result").get("action") == "SwitchOffSlug":
         speech = SwitchOffSlug(req)
-        return speech
     elif req.get("result").get("action") == "SlugDescription":
         speech = SlugDescription(req)
-        return speech
     elif req.get("results").get("action") == "SwitchTariff":
         speech = SwitchTariff(req)
-        return speech
+    return speech
 
-    print("Response: " + speech)
+
+def HandlePhoneNumber(req):
+    result = req.get("result")
+    parameters = result.get("parameters")
+    number = utils.phone_standard(parameters.get("phone-number"))
+    if number:
+        speech = "Спасибо, ваш номер " + number + " успешно сохранён."
+        # post this phone number
+    else:
+        speech = "Неверный формат ввода. \nПожалуйста, введите номер в формате 79XXXXXXXXX"
+        # delete phone entity
+    context_out = req["result"]['contexts']
+    print(context_out)
+    context_out[0]['parameters']['phone-number'] = number
+    print(context_out)
     return {
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": req.get("result").get('contexts'),
+        "contextOut": context_out,
         "source": "AskPhoneNumber"
     }
 
 
+
+
 def AvailableTariffs(req):
     url = 'http://tele2-hackday-2017.herokuapp.com/api/tariffs/available'
-
     response = requests.get(url, headers=headers)
-    
     response = response.json()['data']
     speech = ''
     for i in range(len(response)):
         speech += "Тариф - " + response[i]["name"] + "\n"
-
         speech += "Абонентская плата = " + str(response[i]["subscriptionFee"] // 100)
-
         speech += " руб.  " + str(response[i]["subscriptionFee"] % 100)
-
         speech += " коп. \n"
-
         speech += "Чтобы подключить тариф, введите: Подключить " + response[i]["slug"] + '\n'
-
         speech += "Подробную информацию смотрите здесь: " + response[i]["url"] + "\n\n"
     return {
         "speech": speech,
@@ -121,10 +111,9 @@ def AvailableTariffs(req):
 def GetTariff(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
+    print(req.get("result").get('contexts'))
     try:
         number = parameters.get("phone-number")
-        print(result)
-        print(number)
         headers = {'Content-type': 'application/json',
                    'Accept': 'application/json',
                    'Content-Encoding': 'utf-8',
@@ -139,7 +128,6 @@ def GetTariff(req):
         speech += "Подробную информацию смотрите здесь: " + response["url"]
     except Exception:
         speech = "Номер телефона неверный"
-        print(Exception)
     return {
         "speech": speech,
         "displayText": speech,
@@ -185,8 +173,6 @@ def MySlugs(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(result)
-    print(number)
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
                'Content-Encoding': 'utf-8',
@@ -228,8 +214,6 @@ def Balance(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(req.get("result"))
-    print(number)    
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
                'Content-Encoding': 'utf-8',
@@ -258,8 +242,6 @@ def UserData(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(result)
-    print(number)
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
                'Content-Encoding': 'utf-8',
@@ -286,8 +268,6 @@ def SwitchSlug(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(result)
-    print(number)
     slug = parameters.get("slug-name")
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
@@ -317,8 +297,6 @@ def SwitchOffSlug(req):
     result = req.get("result").get('contexts')[0]
     parameters = result.get("parameters")
     number = parameters.get("phone-number")
-    print(result)
-    print(number)
     slug = parameters.get("slug-name")
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json',
@@ -327,7 +305,6 @@ def SwitchOffSlug(req):
     try:
         url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/services/' + slug
         response = requests.delete(url, headers=headers)
-        print(response.json())
         response = response.json()['meta']
         if response.get('status') == 'OK':
             speech = "Услуга успешно отключена"
@@ -386,48 +363,27 @@ def SlugDescription(req):
 
 
 def SwitchTariff(req):
-
     result = req.get("result").get('contexts')[0]
-
     parameters = result.get("parameters")
-
     number = parameters.get("phone-number")
-    print(result)
-    print(number)
-
     tariff = parameters.get("Tariff-name")
-
     headers = {'Content-type': 'application/json',
-
                'Accept': 'application/json',
-
                'Content-Encoding': 'utf-8',
-
                'X-API-Token': 'string'}
-
     url = 'http://tele2-hackday-2017.herokuapp.com/api/subscribers/' + number + '/tariff/' + tariff
-
     response = requests.put(url, headers=headers)
-
     response = response.json()['meta']
-
     if response.get('status') == 'OK':
         speech = "Тариф успешно изменён"
     else:
         speech = "Ошибка при изменение тарифа"
-
     return {
-
         "speech": speech,
-
         "displayText": speech,
-
         # "data": data,
-
         "contextOut": req.get("result").get('contexts'),
-
         "source": "SwitchTariff"
-
     }
 
 

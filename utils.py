@@ -12,5 +12,5 @@ def phone_standard(text):
     elif len(text1) == 11 and text1[0] == '7':  # 79000000000 format
         pass
     else:
-        return False
+        return ''
     return text1
