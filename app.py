@@ -377,7 +377,7 @@ def SwitchTariff(req):
     if response.get('status') == 'OK':
         speech = "Тариф успешно изменён"
     else:
-        speech = "Ошибка при изменение тарифа"
+        speech = "Ошибка при изменении тарифа"
     return {
         "speech": speech,
         "displayText": speech,
